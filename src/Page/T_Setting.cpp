@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+#include "ElaApplication.h"
 #include "ElaComboBox.h"
 #include "ElaLog.h"
 #include "ElaRadioButton.h"
@@ -12,9 +13,8 @@
 #include "ElaTheme.h"
 #include "ElaToggleSwitch.h"
 #include "ElaWindow.h"
-T_Setting::T_Setting(QWidget* parent)
-    : T_BasePage(parent)
-{
+
+T_Setting::T_Setting(QWidget* parent) : T_BasePage(parent) {
     // 预览窗口标题
     ElaWindow* window = dynamic_cast<ElaWindow*>(parent);
     setWindowTitle("Setting");
@@ -34,28 +34,25 @@ T_Setting::T_Setting(QWidget* parent)
     themeSwitchLayout->addWidget(themeSwitchText);
     themeSwitchLayout->addStretch();
     themeSwitchLayout->addWidget(_themeComboBox);
-    connect(_themeComboBox, QOverload<int>::of(&ElaComboBox::currentIndexChanged), this, [=](int index) {
-        if (index == 0)
-        {
-            eTheme->setThemeMode(ElaThemeType::Light);
-        }
-        else
-        {
-            eTheme->setThemeMode(ElaThemeType::Dark);
-        }
-    });
-    connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
-        _themeComboBox->blockSignals(true);
-        if (themeMode == ElaThemeType::Light)
-        {
-            _themeComboBox->setCurrentIndex(0);
-        }
-        else
-        {
-            _themeComboBox->setCurrentIndex(1);
-        }
-        _themeComboBox->blockSignals(false);
-    });
+    connect(_themeComboBox,
+            QOverload<int>::of(&ElaComboBox::currentIndexChanged), this,
+            [=](int index) {
+                if (index == 0) {
+                    eTheme->setThemeMode(ElaThemeType::Light);
+                } else {
+                    eTheme->setThemeMode(ElaThemeType::Dark);
+                }
+            });
+    connect(eTheme, &ElaTheme::themeModeChanged, this,
+            [=](ElaThemeType::ThemeMode themeMode) {
+                _themeComboBox->blockSignals(true);
+                if (themeMode == ElaThemeType::Light) {
+                    _themeComboBox->setCurrentIndex(0);
+                } else {
+                    _themeComboBox->setCurrentIndex(1);
+                }
+                _themeComboBox->blockSignals(false);
+            });
 
     ElaText* helperText = new ElaText("应用程序设置", this);
     helperText->setWordWrap(false);
@@ -70,9 +67,8 @@ T_Setting::T_Setting(QWidget* parent)
     micaSwitchLayout->addWidget(micaSwitchText);
     micaSwitchLayout->addStretch();
     micaSwitchLayout->addWidget(_micaSwitchButton);
-    connect(_micaSwitchButton, &ElaToggleSwitch::toggled, this, [=](bool checked) {
-        window->setIsEnableMica(checked);
-    });
+    connect(_micaSwitchButton, &ElaToggleSwitch::toggled, this,
+            [=](bool checked) { eApp->setIsEnableMica(checked); });
 
     _logSwitchButton = new ElaToggleSwitch(this);
     ElaScrollPageArea* logSwitchArea = new ElaScrollPageArea(this);
@@ -83,17 +79,15 @@ T_Setting::T_Setting(QWidget* parent)
     logSwitchLayout->addWidget(logSwitchText);
     logSwitchLayout->addStretch();
     logSwitchLayout->addWidget(_logSwitchButton);
-    connect(_logSwitchButton, &ElaToggleSwitch::toggled, this, [=](bool checked) {
-        ElaLog::getInstance()->initMessageLog(checked);
-        if (checked)
-        {
-            qDebug() << "日志已启用!";
-        }
-        else
-        {
-            qDebug() << "日志已关闭!";
-        }
-    });
+    connect(_logSwitchButton, &ElaToggleSwitch::toggled, this,
+            [=](bool checked) {
+                ElaLog::getInstance()->initMessageLog(checked);
+                if (checked) {
+                    qDebug() << "日志已启用!";
+                } else {
+                    qDebug() << "日志已关闭!";
+                }
+            });
 
     _minimumButton = new ElaRadioButton("Minimum", this);
     _compactButton = new ElaRadioButton("Compact", this);
@@ -142,6 +136,4 @@ T_Setting::T_Setting(QWidget* parent)
     addCentralWidget(centralWidget, true, true, 0);
 }
 
-T_Setting::~T_Setting()
-{
-}
+T_Setting::~T_Setting() {}
